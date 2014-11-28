@@ -1,4 +1,7 @@
 class UsersController < ApplicationController
+  respond_to :json
+
+  before_filter :authenticate, except: [:index]
 
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 
@@ -6,7 +9,6 @@ class UsersController < ApplicationController
 
   def index
     @users = User.all
-    # respond_with(@users)
     render json: @users
   end
 

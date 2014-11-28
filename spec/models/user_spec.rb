@@ -20,7 +20,13 @@ RSpec.describe User, :type => :model do
   it "is invalid without a token" do
     user = FactoryGirl.build(:user, token: nil)
     user.valid?
-    expect(user.errors[:token]).to include("can't be blank")
+    expect(user.token).not_to be_present
+  end
+
+  it "saves with a token" do
+    user = FactoryGirl.create(:user)
+    user.valid?
+    expect(user.token).to be_present
   end
 
 
