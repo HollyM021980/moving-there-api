@@ -3,11 +3,11 @@ ruby '2.1.2'
 
 gem 'rails', '4.2.0.beta2'
 gem 'rails-api'
+gem 'jbuilder'
 gem 'pg'
 gem 'bcrypt'
 gem 'rack-cors', require: 'rack/cors'
 gem 'responders', '~> 2.0'
-gem 'active_model_serializers'
 gem 'arel', '6.0.0.beta2' # Fixes issue with scaffold - http://stackoverflow.com/questions/27139007/cant-migrate-database-after-scaffold-section-2-2-ruby-on-rails-tutorial-michae
 
 gem 'rails_12factor', group: :production

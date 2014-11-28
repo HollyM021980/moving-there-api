@@ -1,5 +1,4 @@
 class UsersController < ApplicationController
-  respond_to :json
 
   before_filter :authenticate, except: [:index]
 
@@ -9,7 +8,7 @@ class UsersController < ApplicationController
 
   def index
     @users = User.all
-    render json: @users
+    # render json: @users
   end
 
   def show
