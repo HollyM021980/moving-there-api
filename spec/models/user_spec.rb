@@ -11,6 +11,10 @@ RSpec.describe User, :type => :model do
     expect(user.errors[:email]).to include("can't be blank")
   end
 
+  context "verify email address is valid" do
+    it {should validate_email_format_of(:email).with_message("does not appear to be a valid e-mail address")}
+  end
+
   it "is invalid without a password digest" do
     user = FactoryGirl.build(:user, password_digest: nil)
     user.valid?

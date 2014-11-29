@@ -17,18 +17,25 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    @user.save
-    render json: @user
+    if @user.save
+      render json: @user, status: :created, location: @user
+    else
+      render json: @user.errors, status: :unprocessable_entity
+    end
   end
 
   def update
     @user.update(user_params)
-    render json: @user
+    if @user.update(user_params)
+      head :no_content
+    else
+      render json: @user.errors, status: :unprocessable_entity
+    end
   end
 
   def destroy
     @user.destroy
-    render json: @user
+    head :no_content
   end
 
   private

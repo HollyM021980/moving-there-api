@@ -7,12 +7,18 @@ gem 'jbuilder'
 gem 'pg'
 gem 'bcrypt'
 gem 'rack-cors', require: 'rack/cors'
+gem 'validates_email_format_of'
 gem 'responders', '~> 2.0'
 gem 'arel', '6.0.0.beta2' # Fixes issue with scaffold - http://stackoverflow.com/questions/27139007/cant-migrate-database-after-scaffold-section-2-2-ruby-on-rails-tutorial-michae
 
 gem 'rails_12factor', group: :production
 
-gem 'bullet', group: :development
+
+group :development do
+  gem 'bullet'
+  gem 'guard'
+  gem 'guard-rspec'
+end
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.0.0'
