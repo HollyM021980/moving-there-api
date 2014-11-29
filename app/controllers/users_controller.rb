@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_filter :authenticate, except: [:index]
+  # before_filter :authenticate, except: [:index]
 
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 
@@ -12,7 +12,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    render json: @user
+  #   render json: @user
   end
 
   def create
