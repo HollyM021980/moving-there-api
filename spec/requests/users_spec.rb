@@ -22,8 +22,9 @@ RSpec.describe "Users", :type => :request do
 
       end
 
+      #TODO: This needs to be refined to be more specific to the data
       it "contains the right information" do
-        expect(@users_response[0]['email']).to eq(@user_listing[0]['email'])
+        expect(@users_response.all? {|usr| usr.key?('id')}).to eq(true)
       end
 
       it "doesn't return private attributes" do

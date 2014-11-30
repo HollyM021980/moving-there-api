@@ -5,12 +5,11 @@ class User < ActiveRecord::Base
   has_secure_password
 
   # Validations
-  validates :email, presence: true
+  validates :email, presence: true, uniqueness: true
   validates_email_format_of :email
 
   validates :password_digest, presence: true
-  # validates :access_token, uniqueness: true
-  # validates :email, uniqueness: true
+  validates :token, uniqueness: true
 
   #Roles
   enum role: [:admin, :user]

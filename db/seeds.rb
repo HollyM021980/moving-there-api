@@ -11,3 +11,4 @@ u1 = User.create(first_name: "First1", last_name: "Last4", email: "u1@test.com",
 u2 = User.create(first_name: "First2", last_name: "Last1", email: "u2@test.com", password: "test", password_confirmation: "test")
 u3 = User.create(first_name: "First3", last_name: "Last3", email: "u3@test.com", password: "test", password_confirmation: "test")
 u4 = User.create(first_name: "First4", last_name: "Last4", email: "u4@test.com", password: "test", password_confirmation: "test")
+au4 = User.create(first_name: "AdminFirst1", last_name: "AdminLast1", email: "au1@test.com", password: "test", password_confirmation: "test", role: "admin")

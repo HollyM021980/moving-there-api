@@ -33,5 +33,8 @@ RSpec.describe User, :type => :model do
     expect(user.token).to be_present
   end
 
+  # Use shoulda-matchers to validate uniquness
+  it { should validate_uniqueness_of(:email)}
+  # it { should validate_uniqueness_of(:token)}
 
 end
