@@ -6,6 +6,20 @@ class UsersController < ApplicationController
 
   respond_to :html
 
+  def login
+    user = User.find_by(email: params[:email])
+
+    if user && user.authenticate(params[:password])
+      render json: {"token" => user.token}
+    else
+      head :unauthorized
+    end
+  end
+
+  def logout
+    head :ok
+  end
+
   def index
     @users = User.all
     # render json: @users

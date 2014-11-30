@@ -144,4 +144,26 @@ RSpec.describe UsersController, :type => :controller do
     end
   end
 
+  context "authentication" do
+    let(:user) {FactoryGirl.create :user, password: "12345678", password_confirmation:  "12345678"}
+
+    it "authenticates correctly returning the user token" do
+      post :login, :email => user.email, :password => user.password, :format => "json"
+      json = JSON.parse(response.body)
+      expect(response.status).to eq(200)
+      expect(json["token"]).to eq user.token
+    end
+
+    it "fails authentication" do
+      post :login, :email => user.email, :password => "invalid", :format => "json"
+      expect(response.status).to eq(401)
+    end
+
+    it "successfully logs user out" do
+      post :logout, :email => user.email, :password => user.password, :format => "json"
+      expect(response.status).to eq(200)
+    end
+
+  end
+
 end
