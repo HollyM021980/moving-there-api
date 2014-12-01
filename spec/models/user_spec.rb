@@ -34,7 +34,11 @@ RSpec.describe User, :type => :model do
   end
 
   # Use shoulda-matchers to validate uniquness
-  it { should validate_uniqueness_of(:email)}
-  # it { should validate_uniqueness_of(:token)}
+  context "uniqueness validations" do
+    subject { FactoryGirl.build(:user) }
+
+    it { should validate_uniqueness_of(:email)}
+    it { should validate_uniqueness_of(:token)}
+  end
 
 end
