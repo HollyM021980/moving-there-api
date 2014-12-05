@@ -6,6 +6,8 @@ gem 'rails-api'
 gem 'jbuilder'
 gem 'pg'
 gem 'bcrypt'
+# Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
+# gem 'turbolinks'
 gem 'rack-cors', require: 'rack/cors'
 gem 'validates_email_format_of'
 gem 'responders', '~> 2.0'
