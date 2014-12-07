@@ -32,4 +32,5 @@ group :development, :test do
   gem 'pry-rails'
   gem 'pry-byebug'
   gem 'dotenv-rails'
+  gem 'rspec-activemodel-mocks'
 end

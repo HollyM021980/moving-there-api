@@ -1,8 +1,6 @@
 require 'rails_helper'
 RSpec.describe "Users", :type => :request do
 
-  # let(:json) { JSON.parse(response.body) }
-
   describe "GET /users.json" do
   let(:valid_session) { {} }
 

@@ -1,6 +1,7 @@
+require 'pry'
 class UsersController < ApplicationController
 
-  # before_filter :authenticate, except: [:index]
+  before_filter :authenticate, except: [:login, :logout, :signup, :index]
 
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 
@@ -8,7 +9,6 @@ class UsersController < ApplicationController
 
   def login
     user = User.find_by(email: params[:email])
-
     if user && user.authenticate(params[:password])
       render json: {"token" => user.token}
     else
@@ -58,6 +58,6 @@ class UsersController < ApplicationController
     end
 
     def user_params
-      params.require(:user).permit(:first_name, :last_name, :email, :token, :password_digest, :role)
+      params.require(:user).permit(:first_name, :last_name, :email, :token, :password, :password_confirmation, :role)
     end
 end

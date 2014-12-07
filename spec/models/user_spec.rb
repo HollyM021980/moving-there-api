@@ -21,16 +21,22 @@ RSpec.describe User, :type => :model do
     expect(user.errors[:password_digest]).to include("can't be blank")
   end
 
-  it "is invalid without a token" do
-    user = FactoryGirl.build(:user, token: nil)
-    user.valid?
-    expect(user.token).not_to be_present
-  end
+  context "token authentication" do
 
-  it "saves with a token" do
-    user = FactoryGirl.create(:user)
-    user.valid?
-    expect(user.token).to be_present
+    it { should respond_to(:token) }
+
+    it "is invalid without a token" do
+      user = FactoryGirl.build(:user, token: nil)
+      user.valid?
+      expect(user.token).not_to be_present
+    end
+
+    it "saves with a token" do
+      user = FactoryGirl.create(:user)
+      user.valid?
+      expect(user.token).to be_present
+    end
+
   end
 
   # Use shoulda-matchers to validate uniquness
