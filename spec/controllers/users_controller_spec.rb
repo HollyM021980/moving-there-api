@@ -1,24 +1,23 @@
 require 'rails_helper'
 RSpec.describe UsersController, :type => :controller do
+  render_views
 
-  before(:each) do
-    @request.env["HTTP_ACCEPT"] = "application/json"
-    @request.env["CONTENT_TYPE"] = "application/json"
-  end
+  # before(:each) do
+  #   @valid_token = "test_access1"
+  #   @request.env["HTTP_ACCEPT"] = "application/json"
+  #   @request.env["CONTENT_TYPE"] = "application/json"
+  #   @request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Token.encode_credentials(@valid_token)
+  # end
 
-
-  # This should return the minimal set of attributes required to create a valid
-  # User. As you add validations to User, be sure to
-  # adjust the attributes here as well.
+  let(:json_response) { JSON.parse(response.body) }
   let(:valid_attributes) {
-    {email: "u21@test.com",
-    first_name: "First21",
-    last_name: "Last21",
-    password: "test",
-    password_digest: "test",
-    role: :user
+      {email: "u21@test.com",
+      first_name: "First21",
+      last_name: "Last21",
+      password: "test",
+      password_confirmation: "test",
+      }
     }
-  }
 
   let(:invalid_attributes) {
     {
@@ -26,120 +25,145 @@ RSpec.describe UsersController, :type => :controller do
     }
   }
 
-  # This should return the minimal set of values that should be in the session
-  # in order to pass any filters (e.g. authentication) defined in
-  # UsersController. Be sure to keep this updated too.
-  let(:valid_session) { {} }
-
-  describe "GET index" do
-    it "assigns all users as @users" do
-      user = User.create! valid_attributes
-      get :index, valid_session
-      expect(assigns(:users)).to eq([user])
-    end
+  before(:each) do
+    @auth_user = FactoryGirl.create :user
   end
 
-  describe "GET show" do
-    it "assigns the requested user as @user" do
-      user = FactoryGirl.create(:user)
-      get :show, {:id => user.to_param}, valid_session
-      expect(assigns(:user)).to eq(user)
+
+  describe "GET /users.json" do
+    before do
+      get :index, format: :json
+    end
+
+    context 'all users' do
+      it 'returns the users' do
+        expect(json_response.collect{|user| user["email"]}).to include(@auth_user.email)
+      end
     end
   end
-
 
   describe "POST create" do
     describe "with valid params" do
+      before do
+        # @user = FactoryGirl.build :user
+        @request.env['HTTP_AUTHORIZATION'] = "Token token=#{@auth_user.token}"
+      end
       it "creates a new User" do
         expect {
-          post :create, {:user => valid_attributes}, valid_session
+          post :create, {:user => valid_attributes}
         }.to change(User, :count).by(1)
       end
 
       it "assigns a newly created user as @user" do
-        post :create, {:user => valid_attributes}, valid_session
+        post :create, {:user => valid_attributes}
         expect(assigns(:user)).to be_a(User)
         expect(assigns(:user)).to be_persisted
       end
 
       it "returns a status of 201 - Created" do
-        post :create, {:user => valid_attributes}, valid_session
+        post :create, {:user => valid_attributes}
         expect(response.status).to eq(201)
      end
     end
 
     describe "with invalid params" do
-      it "assigns a newly created but unsaved user as @user" do
-        post :create, {:user => invalid_attributes}, valid_session
+
+      before do
+        @request.env['HTTP_AUTHORIZATION'] = "Token token=#{@auth_user.token}"
+      end
+
+      it "does not save a user without all required attributes" do
+        post :create, {:user => invalid_attributes}
         expect(assigns(:user)).to be_a_new(User)
       end
 
       it "returns status 422 - Unprocessable Entity" do
-        post :create, {:user => invalid_attributes}, valid_session
+        post :create, {:user => invalid_attributes}
         expect(response.status).to eq(422)
       end
     end
   end
 
-  describe "PUT update" do
-    describe "with valid params" do
-      let(:new_attributes) {
-        {
-          email: "test212@test.com",
-          first_name: "First212",
-          last_name: "Last212"
-        }
+  describe "GET show" do
+    before do
+      @user = FactoryGirl.create :user
+      @request.env['HTTP_AUTHORIZATION'] = "Token token=#{@auth_user.token}"
+      get :show, :format => :json, id: @user.id
+    end
 
+    it "assigns the requested user as @user" do
+      expect(json_response["email"]).to eq(@user.email)
+    end
+  end
+
+
+
+
+  describe "PUT update" do
+    let(:new_attributes) {
+      {
+         first_name: "First212",
+        last_name: "Last212",
+        email: "test212@test.com"
       }
+    }
+    context "with valid params" do
+      before do
+       @user = FactoryGirl.create :user
+       @request.env['HTTP_AUTHORIZATION'] = "Token token=#{@auth_user.token}"
+
+       patch :update, format: :json, id: @user.id, :user => {first_name: new_attributes[:first_name], last_name: new_attributes[:last_name], email: new_attributes[:email]}
+      end
 
       it "updates the requested user" do
-        user = User.create! valid_attributes
-        put :update, {:id => user.to_param, :user => new_attributes}, valid_session
-        user.reload
-        expect(user.first_name).to eq new_attributes[:first_name]
-        expect(user.last_name).to eq new_attributes[:last_name]
-        expect(user.email).to eq new_attributes[:email]
+        @user.reload
+        expect(@user.first_name).to eq new_attributes[:first_name]
+        expect(@user.last_name).to eq new_attributes[:last_name]
+        expect(@user.email).to eq new_attributes[:email]
       end
 
       it "assigns the requested user as @user" do
         user = User.create! valid_attributes
-        put :update, {:id => user.to_param, :user => valid_attributes}, valid_session
+        put :update, {:id => user.to_param, :user => valid_attributes}
         expect(assigns(:user)).to eq(user)
       end
 
       it "returns a status of 204 - no content" do
         user = User.create! valid_attributes
-        put :update, {:id => user.to_param, :user => valid_attributes}, valid_session
+        put :update, {:id => user.to_param, :user => valid_attributes}
         expect(response.status).to eq(204)
       end
     end
 
-    describe "with invalid params" do
-      it "assigns the user as @user" do
-        user = User.create! valid_attributes
-        put :update, {:id => user.to_param, :user => invalid_attributes}, valid_session
-        expect(assigns(:user)).to eq(user)
+    context "with invalid params" do
+      before do
+       @user = FactoryGirl.create :user
+       @request.env['HTTP_AUTHORIZATION'] = "Token token=#{@auth_user.token}"
+
+       patch :update, format: :json, id: @user.id, :user => { email: invalid_attributes[:email]}
       end
 
+
       it "returns 422 status - Unprocessable Entity" do
-        user = User.create! valid_attributes
-        put :update, {:id => user.to_param, :user => invalid_attributes}, valid_session
         expect(response.status).to eq(422)
       end
     end
   end
 
   describe "DELETE destroy" do
+    before(:each) do
+      @user = FactoryGirl.create :user
+      @request.env['HTTP_AUTHORIZATION'] = "Token token=#{@auth_user.token}"
+    end
+
     it "destroys the requested user" do
-      user = User.create! valid_attributes
       expect {
-        delete :destroy, {:id => user.to_param}, valid_session
+        delete :destroy, format: :json, id: @user
       }.to change(User, :count).by(-1)
     end
 
     it "returns status of 204 - no content" do
-      user = User.create! valid_attributes
-      delete :destroy, {:id => user.to_param}, valid_session
+      delete :destroy, format: :json, id: @user
       expect(response.status).to eq(204)
     end
   end
