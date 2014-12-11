@@ -1,4 +1,4 @@
-require 'pry'
+# require 'pry'
 module ControllerHelpers
   def sign_in(user = double('user'))
 # binding.pry

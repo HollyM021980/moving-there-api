@@ -1,4 +1,4 @@
-require 'pry'
+# require 'pry'
 class UsersController < ApplicationController
 
   before_filter :authenticate, except: [:login, :logout, :signup, :index]
