@@ -2,13 +2,6 @@ require 'rails_helper'
 RSpec.describe UsersController, :type => :controller do
   render_views
 
-  # before(:each) do
-  #   @valid_token = "test_access1"
-  #   @request.env["HTTP_ACCEPT"] = "application/json"
-  #   @request.env["CONTENT_TYPE"] = "application/json"
-  #   @request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Token.encode_credentials(@valid_token)
-  # end
-
   let(:json_response) { JSON.parse(response.body) }
   let(:valid_attributes) {
       {email: "u21@test.com",
@@ -31,13 +24,24 @@ RSpec.describe UsersController, :type => :controller do
 
 
   describe "GET /users.json" do
-    before do
-      get :index, format: :json
-    end
 
     context 'all users' do
+      before do
+        @user_listing = FactoryGirl.create_list(:user, 10)
+        get :index, format: :json
+      end
+
+      it "successfully responds" do
+        expect(response.status).to eq(200)
+      end
+
       it 'returns the users' do
         expect(json_response.collect{|user| user["email"]}).to include(@auth_user.email)
+      end
+
+      it 'returns the right number of user records' do
+        # List plus auth user
+        expect(json_response.length).to eq(11)
       end
     end
   end
@@ -48,6 +52,7 @@ RSpec.describe UsersController, :type => :controller do
         # @user = FactoryGirl.build :user
         @request.env['HTTP_AUTHORIZATION'] = "Token token=#{@auth_user.token}"
       end
+
       it "creates a new User" do
         expect {
           post :create, {:user => valid_attributes}
@@ -57,7 +62,6 @@ RSpec.describe UsersController, :type => :controller do
       it "assigns a newly created user as @user" do
         post :create, {:user => valid_attributes}
         expect(assigns(:user)).to be_a(User)
-        expect(assigns(:user)).to be_persisted
       end
 
       it "returns a status of 201 - Created" do
@@ -91,8 +95,25 @@ RSpec.describe UsersController, :type => :controller do
       get :show, :format => :json, id: @user.id
     end
 
+    it "successfully responds" do
+      expect(response.status).to eq(200)
+    end
+
     it "assigns the requested user as @user" do
       expect(json_response["email"]).to eq(@user.email)
+    end
+
+    it "contains the right information" do
+      expect(json_response['email']).to eq(@user.email)
+      expect(json_response['first_name']).to eq(@user.first_name)
+      expect(json_response['last_name']).to eq(@user.last_name)
+    end
+
+    it "doesn't return private attributes" do
+      expect(json_response['password_digest']).to be_nil
+      expect(json_response['token']).to be_nil
+      expect(json_response['created_at']).to be_nil
+      expect(json_response['updated_at']).to be_nil
     end
   end
 
@@ -187,7 +208,6 @@ RSpec.describe UsersController, :type => :controller do
       post :logout, :email => user.email, :password => user.password, :format => "json"
       expect(response.status).to eq(200)
     end
-
   end
 
 end
