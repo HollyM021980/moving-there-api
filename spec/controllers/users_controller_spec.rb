@@ -46,6 +46,31 @@ RSpec.describe UsersController, :type => :controller do
     end
   end
 
+  describe "POST signup" do
+    describe "with valid params" do
+      before do
+        # @user = FactoryGirl.build :user
+        @request.env['HTTP_AUTHORIZATION'] = "Token token=#{@auth_user.token}"
+      end
+
+      it "creates a new User" do
+        expect {
+          post :signup, {:user => valid_attributes}
+        }.to change(User, :count).by(1)
+      end
+
+      it "assigns a newly signupd user as @user" do
+        post :signup, {:user => valid_attributes}
+        expect(assigns(:user)).to be_a(User)
+      end
+
+      it "returns a status of 201 - Created" do
+        post :signup, {:user => valid_attributes}
+        expect(response.status).to eq(201)
+     end
+    end
+  end
+
   describe "POST create" do
     describe "with valid params" do
       before do
