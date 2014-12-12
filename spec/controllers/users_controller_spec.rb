@@ -48,10 +48,6 @@ RSpec.describe UsersController, :type => :controller do
 
   describe "POST signup" do
     describe "with valid params" do
-      before do
-        # @user = FactoryGirl.build :user
-        @request.env['HTTP_AUTHORIZATION'] = "Token token=#{@auth_user.token}"
-      end
 
       it "creates a new User" do
         expect {
@@ -74,7 +70,6 @@ RSpec.describe UsersController, :type => :controller do
   describe "POST create" do
     describe "with valid params" do
       before do
-        # @user = FactoryGirl.build :user
         @request.env['HTTP_AUTHORIZATION'] = "Token token=#{@auth_user.token}"
       end
 
@@ -92,7 +87,20 @@ RSpec.describe UsersController, :type => :controller do
       it "returns a status of 201 - Created" do
         post :create, {:user => valid_attributes}
         expect(response.status).to eq(201)
-     end
+      end
+
+      describe "with invalid params" do
+
+        it "does not create a user without all required attributes" do
+          post :signup, {:user => invalid_attributes}
+          expect(assigns(:user)).to be_a_new(User)
+        end
+
+        it "returns status 422 - Unprocessable Entity" do
+          post :signup, {:user => invalid_attributes}
+          expect(response.status).to eq(422)
+        end
+      end
     end
 
     describe "with invalid params" do
