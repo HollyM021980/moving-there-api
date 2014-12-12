@@ -27,6 +27,10 @@ RSpec.describe UsersController, :type => :routing do
       expect(:post => "/login").to route_to("users#login")
     end
 
+    it "routes to #signup" do
+      expect(:post => "/signup").to route_to("users#signup")
+    end
+
     it "routes to #logout" do
       expect(:post => "/logout").to route_to("users#logout")
     end
