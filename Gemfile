@@ -13,6 +13,7 @@ gem 'validates_email_format_of'
 gem 'responders', '~> 2.0'
 gem 'arel', '6.0.0.beta2' # Fixes issue with scaffold - http://stackoverflow.com/questions/27139007/cant-migrate-database-after-scaffold-section-2-2-ruby-on-rails-tutorial-michae
 gem 'unicorn'
+gem 'rack-timeout'
 
 gem 'rails_12factor', group: :production
 
